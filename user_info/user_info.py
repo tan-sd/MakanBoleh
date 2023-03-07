@@ -44,9 +44,9 @@ class user_info(db.Model):
     def json(self):
         return {"user_id": self.user_id, "name": self.name, "address": self.address, "latitude": self.latitude, "longitude":self.longitude, "travel_appetite": self.travel_appetite}
 
-@app.route('/p')
+@app.route('/')
 def nothing():
-    return 'Hello, Flask'
+    return 'peekaboo!'
 
 @app.route("/profile")
 def getUserInfo():
@@ -74,7 +74,7 @@ def getUserInfo():
     ), 404
 
 
-@app.route("/profile/<string:user_id>", methods=['GET', 'PUT'])
+@app.route("/profile/<int:user_id>", methods=['GET', 'PUT'])
 def find_by_user_id(user_id):
 
     # shd oni hav one book returned and none if no match
@@ -83,58 +83,58 @@ def find_by_user_id(user_id):
         return jsonify(
             {
                 "code": 200,
-                "data": user_info.json()
+                "data": user.json()
             }
         )
     return jsonify(
         {
             "code": 404,
-            "message": "Book not found."
+            "message": "User not found."
         }
     ), 404
 
-# @app.route("/book/<string:isbn13>", methods=['POST'])
-# def create_book(isbn13):
+@app.route("/createprofile/<int:user_id>", methods=['POST'])
+def create_user(user_id):
+    # thinking to create with the name insted of user_id cuz this dont make sense
+    
+    if (user_info.query.filter_by(user_id=user_id).first()):
+        return jsonify(
+            {
+                "code": 400,
+                "data": {
+                    "user_id": user_id
+                },
+                "message": "user exists already"
+            }
+        ), 400
+    # 400 BAD request
 
-#     # to check if book already exists in the table
-#     if (Book.query.filter_by(isbn13=isbn13).first()):
-#         return jsonify(
-#             {
-#                 "code": 400,
-#                 "data": {
-#                     "isbn13": isbn13
-#                 },
-#                 "message": "Book already exists."
-#             }
-#         ), 400
-#     # 400 BAD request
+    data = request.get_json()
+    user = user_info(user_id, **data)
+    #  ** means allow arbitrary number of arguments to a function
 
-#     data = request.get_json()
-#     book = Book(isbn13, **data)
-#     #  ** means allow arbitrary number of arguments to a function
+    try:
+        db.session.add(user)
+        db.session.commit()
+        # to commit the change
 
-#     try:
-#         db.session.add(book)
-#         db.session.commit()
-#         # to commit the change
+    except:
+        return jsonify(
+            {
+                "code": 500,
+                "data": {
+                    "user_id": user_id
+                },
+                "message": "An error occurred creating user info."
+            }
+        ), 500
 
-#     except:
-#         return jsonify(
-#             {
-#                 "code": 500,
-#                 "data": {
-#                     "isbn13": isbn13
-#                 },
-#                 "message": "An error occurred creating the book."
-#             }
-#         ), 500
-
-#     return jsonify(
-#         {
-#             "code": 201,
-#             "data": book.json()
-#         }
-#     ), 201
+    return jsonify(
+        {
+            "code": 201,
+            "data": user.json()
+        }
+    ), 201
 
 
 if __name__ == '__main__':
