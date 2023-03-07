@@ -11,7 +11,7 @@ db = SQLAlchemy(app)
 
 class user_info(db.Model):
     __tablename__ = 'user_info'
-#ID (INT) (auto increment)
+#user_ID (INT) (auto increment)
 # Name (VARCHAR)
 # Default_Address{
 # Address (VARCHAR)
@@ -23,22 +23,26 @@ class user_info(db.Model):
 # for ref if want to change the format in sqlworkbench
 # https://stackoverflow.com/questions/17371639/how-to-store-arrays-in-mysql
 
-    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.VARCHAR(64), nullable=False)
     # default_address = db.Column(db.ARRAY(Nested(MutableList.as_mutable(ARRAY(MutableDict.as_mutable(ARRAY(String)))))))
-    default_address = db.Column(db.VARCHAR(64), nullable=False)
+    address = db.Column(db.VARCHAR(64), nullable=False)
+    latitude = db.Column(db.Float(precision=6), nullable=False)
+    longitude = db.Column(db.Float(precision=6), nullable=False)
     dietary_type = db.Column(db.VARCHAR(64))
     travel_appetite = db.Column(db.VARCHAR(64))
 
-    def __init__(self, id, name, default_address, dietary_type, travel_appetite):
-        self.id = id
+    def __init__(self, user_id, name, address, latitude, longitude, dietary_type, travel_appetite):
+        self.user_id = user_id
         self.name = name
-        self.default_address = default_address
+        self.address = address
+        self.latitude = latitude
+        self.longitude = longitude
         self.dietary_type = dietary_type
         self.travel_appetite = travel_appetite
 
     def json(self):
-        return {"id": self.id, "name": self.name, "default_address": self.default_address, "travel_appetite": self.travel_appetite}
+        return {"user_id": self.user_id, "name": self.name, "address": self.address, "latitude": self.latitude, "longitude":self.longitude, "travel_appetite": self.travel_appetite}
 
 @app.route('/p')
 def nothing():
@@ -54,7 +58,7 @@ def getUserInfo():
             {
                 "code": 200,
                 "data": {
-                    "books": [info.json() for info in all_user_info]
+                    "user": [info.json() for info in all_user_info]
                 }
             }
         )
@@ -70,11 +74,11 @@ def getUserInfo():
     ), 404
 
 
-@app.route("/profile/<string:id>", methods=['GET', 'PUT'])
-def find_by_id(id):
+@app.route("/profile/<string:user_id>", methods=['GET', 'PUT'])
+def find_by_user_id(user_id):
 
     # shd oni hav one book returned and none if no match
-    user = user_info.query.filter_by(id=id).first()
+    user = user_info.query.filter_by(user_id=user_id).first()
     if user:
         return jsonify(
             {
@@ -134,4 +138,4 @@ def find_by_id(id):
 
 
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+    app.run(port=1111, debug=True)
