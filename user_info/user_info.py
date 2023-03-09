@@ -1,9 +1,15 @@
-from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 
+import os, sys
+import haversine as hs
+import requests
+from invokes import invoke_http
 
 
 app = Flask(__name__)
+CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/user_info'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -136,6 +142,44 @@ def create_user(user_id):
         }
     ), 201
 
+@app.route("/filter_user", methods=['GET'])
+# search for users that are within the distance
+def filter_user():
+    # check input format and data is JSON
+    if request.is_json:
+        try:
+            query = request.get_json();
+            print("\nReceived an order in JSON:", query)
 
+            # do the actual checking
+            # get list of all users
+            all_user_info = user_info.query.all()
+            filtered_users = []
+            if len(all_user_info):
+                # filter for users who are "close" to post according to their travel appetite
+                for user in all_user_info:
+                    user_latitude = user.latitude
+                    user_longitude = user.longitude
+                    user_travel_appetite = user.travel_appetite
+                    query_latitude = query.latitude
+                    query_longitude = query.longitude
+                    distance = hs.haversine((user_latitude,user_longitude),(query_latitude, query_longitude))
+
+                    if distance <= user_travel_appetite:
+                        filtered_users.append(user)
+                
+                return all_user_info
+            
+            else:
+                # the else comes here
+                return jsonify(
+                    {
+                        "code": 404,
+                        "message": "No information to be displayed."
+                    }
+                ), 404
+        except:
+            pass
+        
 if __name__ == '__main__':
     app.run(port=1111, debug=True)
