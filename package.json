@@ -1,0 +1,22 @@
+{
+  "name": "makanboleh",
+  "version": "1.0.0",
+  "description": "MakanBoleh - Enterprise Solution Development (SMU)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tan-sd/MakanBoleh.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tan-sd/MakanBoleh/issues"
+  },
+  "homepage": "https://github.com/tan-sd/MakanBoleh#readme",
+  "dependencies": {
+    "bootstrap": "^5.2.3"
+  }
+}
