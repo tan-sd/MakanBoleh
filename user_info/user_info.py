@@ -148,27 +148,42 @@ def filter_user():
     # check input format and data is JSON
     if request.is_json:
         try:
-            query = request.get_json();
+            query = request.get_json()
             print("\nReceived an order in JSON:", query)
 
             # do the actual checking
-            # get list of all users
+            # return list of user objects
             all_user_info = user_info.query.all()
             filtered_users = []
             if len(all_user_info):
                 # filter for users who are "close" to post according to their travel appetite
                 for user in all_user_info:
-                    user_latitude = user.latitude
-                    user_longitude = user.longitude
-                    user_travel_appetite = user.travel_appetite
-                    query_latitude = query.latitude
-                    query_longitude = query.longitude
+                    user_latitude = user['latitude']
+                    user_longitude = user['longitude']
+                    user_travel_appetite = user['travel_appetite']
+                    query_latitude = query['latitude']
+                    query_longitude = query['longitude']
                     distance = hs.haversine((user_latitude,user_longitude),(query_latitude, query_longitude))
 
                     if distance <= user_travel_appetite:
                         filtered_users.append(user)
                 
-                return all_user_info
+                # return jsonify(
+                #     {
+                #         "code": 200,
+                #         "data": {
+                #             "user": [info.json() for info in filtered_users]
+                #         }
+                #     }
+                # )
+                return jsonify(
+                    {
+                        "code": 200,
+                        "data": {
+                            "user": [info.json() for info in all_user_info]
+                        }
+                    }
+                )
             
             else:
                 # the else comes here
