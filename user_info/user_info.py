@@ -158,9 +158,9 @@ def filter_user():
             if len(all_user_info):
                 # filter for users who are "close" to post according to their travel appetite
                 for user in all_user_info:
-                    user_latitude = user['latitude']
-                    user_longitude = user['longitude']
-                    user_travel_appetite = user['travel_appetite']
+                    user_latitude = user.latitude
+                    user_longitude = user.longitude
+                    user_travel_appetite = float(user.travel_appetite)
                     query_latitude = query['latitude']
                     query_longitude = query['longitude']
                     distance = hs.haversine((user_latitude,user_longitude),(query_latitude, query_longitude))
@@ -168,22 +168,22 @@ def filter_user():
                     if distance <= user_travel_appetite:
                         filtered_users.append(user)
                 
-                # return jsonify(
-                #     {
-                #         "code": 200,
-                #         "data": {
-                #             "user": [info.json() for info in filtered_users]
-                #         }
-                #     }
-                # )
                 return jsonify(
                     {
                         "code": 200,
                         "data": {
-                            "user": [info.json() for info in all_user_info]
+                            "user": [info.json() for info in filtered_users]
                         }
                     }
                 )
+                # return jsonify(
+                #     {
+                #         "code": 200,
+                #         "data": {
+                #             "user": [info.json() for info in all_user_info]
+                #         }
+                #     }
+                # )
             
             else:
                 # the else comes here
