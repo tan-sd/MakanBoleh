@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google API code templates</title>
+    <!-- for map -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <!-- Vue 3 -->
+    <script src='https://cdn.jsdelivr.net/npm/vue@next'></script>
+    <!-- access api -->
+    <script type="module" src="./api.js"></script>
+
+    <style>
+        #map {
+            height: 500px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <!-- map instance -->
+    <div>
+        <div id="map"></div>
+    </div>
+    
+
+    <!-- autocomplete field -->
+    <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="autocomplete">
+        <label for="input_place" id="autcomplete_input">Start by typing a location here...</label>
+    </div>
+
+    <!-- get geolocation from user -->
+    <!-- <script>
+        var x = document.getElementById("demo");
+        function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition);
+        } else {
+            x.innerHTML = "Geolocation is not supported by this browser.";
+        }
+        }
+
+        function showPosition(position) {
+        x.innerHTML = "Latitude: " + position.coords.latitude +
+        "<br>Longitude: " + position.coords.longitude;
+        }
+    </script> -->
+    <!-- map script -->
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB_XNrepzj7pUf2-dp9vSkpAfjXkAB9yHI&libraries=places&callback=initMap&v=weekly"
+      defer
+    ></script>
+</body>
+</html>
