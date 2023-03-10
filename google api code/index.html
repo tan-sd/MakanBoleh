@@ -11,6 +11,8 @@
     <script src='https://cdn.jsdelivr.net/npm/vue@next'></script>
     <!-- access api -->
     <script type="module" src="./api.js"></script>
+    <!-- get user location -->
+    <script src="./get_user_location.js"></script>
 
     <style>
         #map {
@@ -25,6 +27,10 @@
         <div id="map"></div>
     </div>
     
+    <div>
+        <div id="location"></div>
+        <button onclick="get_location()">click on me to get your location</button>
+    </div>
 
     <!-- autocomplete field -->
     <div class="form-floating mb-3">

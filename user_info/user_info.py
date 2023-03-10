@@ -83,7 +83,7 @@ def getUserInfo():
 @app.route("/profile/<int:user_id>", methods=['GET', 'PUT'])
 def find_by_user_id(user_id):
 
-    # shd oni hav one book returned and none if no match
+    # shd oni hav one user returned and none if no match
     user = user_info.query.filter_by(user_id=user_id).first()
     if user:
         return jsonify(
