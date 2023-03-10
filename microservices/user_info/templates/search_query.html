@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Entry Page</title>
+</head>
+<body>
+  <form action="search/user" method="post">
+    <label for="name">Please enter your name: </label>
+    <input type="text" id="name" name="name"><br>
+    <input type="submit" value="SEND">
+  </form>
+
+  <!-- <form action="search/user" method="post">
+    This one to update your own details. not done.
+    <label for="name">Please enter your name: </label>
+    <input type="text" id="name2" name="name"><br>
+    <input type="submit" value="SEND">
+  </form> -->
+
+  <!-- another form to create profile -->
+  <br>
+  <h3>Fill in the boxes to create profile </h3>
+  <form action="createprofile" method="post">
+    <label for="name">Please enter your name: </label>
+    <input type="text" id="name1" name="name1"><br>
+
+    <!-- <label for="address">Address: </label>
+    <input type="text" id="address" name="address"><br> -->
+
+    <!-- <label for="name">Dietary type: </label>
+    <input type="text" id="dietary" name="dietary"><br> -->
+
+    <label for="name">Travel appetite: </label>
+    <select class='form-select' aria-label='Default select example' id="travel" name="travel">
+        <option selected>How willing are you to travel?</option>
+        <option value='Near'>Near</option>
+        <option value='Far'>Far</option>
+        <option value='Very Far'>Very Far</option>
+    </select>
+    <br>
+
+    <input type="submit" value="SEND">
+  </form>
+
+
+</body>
+</html>
