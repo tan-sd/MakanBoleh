@@ -19,10 +19,9 @@ CREATE TABLE IF NOT EXISTS `food_info` (
   
   `post_id` int(11) NOT NULL AUTO_INCREMENT, -- post_id is randomly generated 
   `creator_id` int(11) NOT NULL AUTO_INCREMENT,
-  `time_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `post_name` varchar(60),
-  `latitude` float(15),
-  `longitude` float(15),
+  `latitude` float(precision=6),
+  `longitude` float(precision=6),
   `description` varchar(1000) NULL,
   `allergens` varchar(8000) NULL, 
   'is_available' bit
