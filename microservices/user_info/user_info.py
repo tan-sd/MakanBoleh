@@ -2,7 +2,11 @@ from flask import Flask, request, jsonify, redirect, url_for, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from os import environ
+
+import os, sys
 import haversine as hs
+import requests
+# from invokes import invoke_http
 
 # request.args for get param
 # request.form for post param
@@ -60,7 +64,7 @@ def nothing():
     return render_template('search_query.html')
     
 # to diplay profile of all users
-@app.route("/profile", methods=['POST'])
+@app.route("/profile")
 def getUserInfo():
 
     all_user_info = user_info.query.all()
@@ -90,10 +94,10 @@ def getUserInfo():
 def find_user():
     name = request.form.get('name')
     user = user_info.query.filter_by(name=name).first()
-    if name:
+    if name and user:
         return render_template('search_user.html', name=name, data=user)
     else:
-        return 'Please go back and enter your name...', 400  # 400 Bad Request
+        return 'Please go back and enter a valid name...', 400  # 400 Bad Request
     
 
 # to display user info
@@ -116,7 +120,6 @@ def find_by_user_id(user_id):
         }
     ), 404
 
-# TO DO?
 # just to update user profile, according to the data receieved from website
 @app.route("/profile/<string:name>/update", methods=['PUT'])
 def update_by_user_id(name):
@@ -140,14 +143,26 @@ def update_by_user_id(name):
 # to create user info when user first created account
 @app.route("/createprofile/<string:name>", methods=['POST'])
 def create_user(name):
-    # thinking to create with the name insted of user_id cuz this dont make sense
+
+    # focus on name of boxes not id
+    # name = request.form.get('name1')
+    # dietary = request.form.get('dietary')
+    # address = request.form.get('address')
+    # travel = request.form.get('travel')
+
+    # if user dont exist, ill create user
+    # if name:
+    #     return render_template('create_user.html', name=name, travel=travel)
+    # else:
+    #     return 'Please go back and enter your name...', 400  # 400 Bad Request
     
+
     if (user_info.query.filter_by(name=name).first()):
         return jsonify(
             {
                 "code": 400,
                 "data": {
-                    "user_id": name
+                    "name": name
                 },
                 "message": "user exists already"
             }
@@ -168,7 +183,7 @@ def create_user(name):
             {
                 "code": 500,
                 "data": {
-                    "user_id": name
+                    "name": name
                 },
                 "message": "An error occurred creating user info."
             }
@@ -180,6 +195,7 @@ def create_user(name):
             "data": user.json()
         }
     ), 201
+
 
 
 if __name__ == '__main__':
