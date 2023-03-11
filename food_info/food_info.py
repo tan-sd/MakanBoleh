@@ -5,7 +5,7 @@
 import os
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-
+import haversine as hs
 from datetime import datetime
 
 app = Flask(__name__)
@@ -200,6 +200,60 @@ def create_post(post_id):
 #                 "message": "An error occurred while updating the order. " + str(e)
 #             }
 #         ), 500
+
+'''
+Details for wrapper function below
+
+Function: search for food posts which are within a specified user's travel appetite
+Input: user JSON object
+Output: array of food post JSON objects that fulfill the criteria
+'''
+@app.route("/filter_post", methods=['GET'])
+# search for users that are within the distance
+def filter_post():
+    # check input format and data is JSON
+    if request.is_json:
+        try:
+            # get query info
+            query = request.get_json()
+            print("\nReceived an order in JSON:", query)
+
+            # do the actual checking
+            # return list of food post objects from food_dB
+            all_food_info = food_db.query.all()
+            filtered_food = []
+            if len(all_food_info):
+                # filter for posts within specified user's travel appetite
+                for food in all_food_info:
+                    food_latitude = food.latitude
+                    food_longitude = food.longitude
+                    user_latitude = query['latitude']
+                    user_longitude = query['longitude']
+                    user_travel_appetite = query['travel_appetite']
+                    distance = hs.haversine((food_latitude,food_longitude),(user_latitude, user_longitude))
+
+                    if distance <= user_travel_appetite:
+                        filtered_food.append(food)
+                # return list of food post objects where the post is within the user's travel appetite
+                return jsonify(
+                    {
+                        "code": 200,
+                        "data": {
+                            "user": [info.json() for info in filtered_food]
+                        }
+                    }
+                )
+            
+            else:
+                # the else comes here
+                return jsonify(
+                    {
+                        "code": 404,
+                        "message": "No information to be displayed."
+                    }
+                ), 404
+        except:
+            pass
 
 
 if __name__ == '__main__':
