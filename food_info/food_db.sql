@@ -7,6 +7,7 @@ SET time_zone = "+00:00";
 --
 -- Database: `food_db`
 --
+DROP DATABASE IF EXISTS `food_db`;
 CREATE DATABASE IF NOT EXISTS `food_db` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE `food_db`;
 
@@ -17,14 +18,14 @@ USE `food_db`;
 DROP TABLE IF EXISTS `food_table`;
 CREATE TABLE IF NOT EXISTS `food_info` (
   
-  `post_id` int(11) NOT NULL AUTO_INCREMENT, -- post_id is randomly generated 
-  `creator_id` int(11) NOT NULL AUTO_INCREMENT,
+  `post_id` int(11) NOT NULL,
+  `creator_id` int(11) NOT NULL,
   `post_name` varchar(60),
-  `latitude` float(precision=6),
-  `longitude` float(precision=6),
+  `latitude` decimal(10,6),
+  `longitude` decimal(10,6),
   `description` varchar(1000) NULL,
   `allergens` varchar(8000) NULL, 
-  'is_available' bit
+  `is_available` bit,
 
   PRIMARY KEY (`post_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+);
