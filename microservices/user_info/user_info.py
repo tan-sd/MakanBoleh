@@ -1,15 +1,18 @@
+from flask import Flask, request, jsonify, redirect, url_for, render_template
 from flask_sqlalchemy import SQLAlchemy
-from flask import Flask, request, jsonify
 from flask_cors import CORS
+from os import environ
 
 import os, sys
 import haversine as hs
 import requests
-from invokes import invoke_http
+# from invokes import invoke_http
 
+# request.args for get param
+# request.form for post param
+# request.values for the abv 2
 
 app = Flask(__name__)
-CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/user_info'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -17,14 +20,6 @@ db = SQLAlchemy(app)
 
 class user_info(db.Model):
     __tablename__ = 'user_info'
-#user_ID (INT) (auto increment)
-# Name (VARCHAR)
-# Default_Address{
-# Address (VARCHAR)
-# Latitude (FLOAT)
-# Longitude (FLOAT)}
-# Dietary_Type (ARRAY)
-# Travel_Appetite (VARCHAR)
 
 # for ref if want to change the format in sqlworkbench
 # https://stackoverflow.com/questions/17371639/how-to-store-arrays-in-mysql
@@ -50,14 +45,28 @@ class user_info(db.Model):
     def json(self):
         return {"user_id": self.user_id, "name": self.name, "address": self.address, "latitude": self.latitude, "longitude":self.longitude, "travel_appetite": self.travel_appetite}
 
+    def get_distance(self, Location):
+        '''
+        input: Location
+
+        syntax: self.get_distance(Location)
+
+        output: Location JSON if Location within self.travel_appetite else Failure message
+        '''
+        distance = hs.haversine((self.latitude,self.longitude),(Location.latitude, Location.longitude))
+        if distance <= self.travel_appetite:
+            return {"post_id": Location.post_id, "address": Location.address, "latitude": Location.latitude, "longitude": Location.longitude}
+        else:
+            return "Method failed because distance larger than travel_appetite"
+        
 @app.route('/')
 def nothing():
-    return 'peekaboo!'
-
+    return render_template('search_query.html')
+    
+# to diplay profile of all users
 @app.route("/profile")
 def getUserInfo():
 
-    # retrieve all records
     all_user_info = user_info.query.all()
     if len(all_user_info):
         return jsonify(
@@ -68,6 +77,7 @@ def getUserInfo():
                 }
             }
         )
+        
     # if HTTP status code not specified at the end, 
     # then 200 OK returned
 
@@ -79,17 +89,28 @@ def getUserInfo():
         }
     ), 404
 
+# search user by username
+@app.route("/search/user", methods=['POST'])
+def find_user():
+    name = request.form.get('name')
+    user = user_info.query.filter_by(name=name).first()
+    if name and user:
+        return render_template('search_user.html', name=name, data=user)
+    else:
+        return 'Please go back and enter a valid name...', 400  # 400 Bad Request
+    
 
-@app.route("/profile/<int:user_id>", methods=['GET', 'PUT'])
+# to display user info
+@app.route("/profile/<int:user_id>", methods=['GET'])
 def find_by_user_id(user_id):
 
-    # shd oni hav one book returned and none if no match
+    # shd display user profile
     user = user_info.query.filter_by(user_id=user_id).first()
     if user:
         return jsonify(
             {
                 "code": 200,
-                "data": user.json()
+                "data": user
             }
         )
     return jsonify(
@@ -99,16 +120,49 @@ def find_by_user_id(user_id):
         }
     ), 404
 
-@app.route("/createprofile/<int:user_id>", methods=['POST'])
-def create_user(user_id):
-    # thinking to create with the name insted of user_id cuz this dont make sense
+# just to update user profile, according to the data receieved from website
+@app.route("/profile/<string:name>/update", methods=['PUT'])
+def update_by_user_id(name):
     
-    if (user_info.query.filter_by(user_id=user_id).first()):
+    user = user_info.query.filter_by(name=name).first()
+    if user:
+        return jsonify(
+            {
+                "code": 200,
+                "data": user.json()
+            }
+        )
+    
+    return jsonify(
+        {
+            "code": 404,
+            "message": "User not found."
+        }
+    ), 404
+
+# to create user info when user first created account
+@app.route("/createprofile/<string:name>", methods=['POST'])
+def create_user(name):
+
+    # focus on name of boxes not id
+    # name = request.form.get('name1')
+    # dietary = request.form.get('dietary')
+    # address = request.form.get('address')
+    # travel = request.form.get('travel')
+
+    # if user dont exist, ill create user
+    # if name:
+    #     return render_template('create_user.html', name=name, travel=travel)
+    # else:
+    #     return 'Please go back and enter your name...', 400  # 400 Bad Request
+    
+
+    if (user_info.query.filter_by(name=name).first()):
         return jsonify(
             {
                 "code": 400,
                 "data": {
-                    "user_id": user_id
+                    "name": name
                 },
                 "message": "user exists already"
             }
@@ -116,7 +170,7 @@ def create_user(user_id):
     # 400 BAD request
 
     data = request.get_json()
-    user = user_info(user_id, **data)
+    user = user_info(name, **data)
     #  ** means allow arbitrary number of arguments to a function
 
     try:
@@ -129,7 +183,7 @@ def create_user(user_id):
             {
                 "code": 500,
                 "data": {
-                    "user_id": user_id
+                    "name": name
                 },
                 "message": "An error occurred creating user info."
             }
@@ -142,17 +196,25 @@ def create_user(user_id):
         }
     ), 201
 
+'''
+Details for wrapper function below
+
+Function: search for users where the food post latlng is within the users' travel appetite
+Input: food post JSON object
+Output: array of user JSON objects who fulfill the criteria
+'''
 @app.route("/filter_user", methods=['GET'])
 # search for users that are within the distance
 def filter_user():
     # check input format and data is JSON
     if request.is_json:
         try:
+            # get query info
             query = request.get_json()
             print("\nReceived an order in JSON:", query)
 
             # do the actual checking
-            # return list of user objects
+            # return list of user objects from userdB
             all_user_info = user_info.query.all()
             filtered_users = []
             if len(all_user_info):
@@ -167,7 +229,7 @@ def filter_user():
 
                     if distance <= user_travel_appetite:
                         filtered_users.append(user)
-                
+                # return list of user objects where the post is within the user's travel appetite
                 return jsonify(
                     {
                         "code": 200,
@@ -176,14 +238,6 @@ def filter_user():
                         }
                     }
                 )
-                # return jsonify(
-                #     {
-                #         "code": 200,
-                #         "data": {
-                #             "user": [info.json() for info in all_user_info]
-                #         }
-                #     }
-                # )
             
             else:
                 # the else comes here
@@ -195,6 +249,6 @@ def filter_user():
                 ), 404
         except:
             pass
-        
+
 if __name__ == '__main__':
     app.run(port=1111, debug=True)

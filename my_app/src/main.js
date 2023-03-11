@@ -1,7 +1,8 @@
 import { createApp } from "vue";
 import App from "./App.vue";
+import router from './router';
 import "../styling/sass/main.min.css";
-import "../styling/style.css"
+import "../styling/style.css";
 
 /* import the fontawesome core */
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -15,6 +16,6 @@ import { faCow, faHourglassHalf, faLeaf, faLocationDot, faStarAndCrescent, faUse
 /* add icons to the library */
 library.add(faUserSecret, faLocationDot, faStarAndCrescent, faLeaf, faCow, faHourglassHalf)
 
-createApp(App).component('font-awesome-icon', FontAwesomeIcon).mount("#app");
-
 import "../node_modules/bootstrap/dist/js/bootstrap"
+
+createApp(App).component('font-awesome-icon', FontAwesomeIcon).use(router).mount("#app");
