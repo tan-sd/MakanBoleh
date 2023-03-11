@@ -1,6 +1,7 @@
 import { createApp } from "vue";
 import App from "./App.vue";
 import router from './router';
+import VueGoogleMaps from '@fawmi/vue-google-maps';
 import "../styling/sass/main.min.css";
 import "../styling/style.css";
 
@@ -18,4 +19,13 @@ library.add(faUserSecret, faLocationDot, faStarAndCrescent, faLeaf, faCow, faHou
 
 import "../node_modules/bootstrap/dist/js/bootstrap"
 
-createApp(App).component('font-awesome-icon', FontAwesomeIcon).use(router).mount("#app");
+const app = createApp(App);
+app.use(router).use(VueGoogleMaps, {
+    load: {
+        key: 'AIzaSyB_XNrepzj7pUf2-dp9vSkpAfjXkAB9yHI',
+        libraries: 'places'
+    },
+});
+
+app.component('font-awesome-icon', FontAwesomeIcon);
+app.mount("#app");
