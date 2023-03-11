@@ -16,7 +16,7 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 db = SQLAlchemy(app)
 
 class food_db(db.Model):
-    __tablename__ = 'food_table'
+    __tablename__ = 'food_info'
 
     post_id = db.Column(db.Integer, primary_key=True)
     creator_id = db.Column(db.Integer, nullable=False)
@@ -26,11 +26,6 @@ class food_db(db.Model):
     description = db.Column(db.VARCHAR(300))
     allergens = db.Column(db.VARCHAR(64))
     is_available = db.Column(db.Integer(), nullable=False)
-
-    status = db.Column(db.String(10), nullable=False)
-    created = db.Column(db.DateTime, nullable=False, default=datetime.now)
-    modified = db.Column(db.DateTime, nullable=False,
-                         default=datetime.now, onupdate=datetime.now)
 
     def __init__(self, post_id, creator_id, post_name, latitude, longitude, description, allergens, is_available):
         self.post_id = post_id
@@ -55,10 +50,27 @@ class food_db(db.Model):
         }
         return post
 
+# SHOW ALL POSTS
 @app.route("/")
 def test():
-    return 'IT WORKS GUYS IM AMAZING'
+    food_list = food_db.query.all()
+    if len(food_list):
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "food": [food.json() for food in food_list]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There is no food."
+        }
+    ), 404
 
+# CREATE A POST (IN PROGRESS)
 @app.route("/createpost/<int:post_id>", methods=['POST'])
 def create_post(post_id):
 
@@ -74,7 +86,7 @@ def create_post(post_id):
             }
         ), 400
     #else, carry on making the post
-
+    
     data = request.get_json()
     post = food_db(post_id,**data)
 
@@ -100,7 +112,8 @@ def create_post(post_id):
         }
     ), 201
 
-
+# DELETE A POST (IN PROGRESS)
+# @app.route("/deletepost/<int:post_id>", methods=['DELETE'])
 # @app.route("/order/<string:order_id>")
 # def find_by_order_id(order_id):
 #     order = Order.query.filter_by(order_id=order_id).first()
