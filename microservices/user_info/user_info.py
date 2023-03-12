@@ -93,18 +93,23 @@ def getUserInfo():
 @app.route("/search/user", methods=['POST', 'GET'])
 def find_user():
     if request.method =='POST':
+        # these are the inputs
         name = request.form.get('name')
         latitude = request.form.get('latitude')
         longitude = request.form.get('longitude')
         form = request.form
         user = user_info.query.filter_by(name=name).first()
+        all = user_info.query.all()
+
         
+        # over here i updating the db lat lng 
         user.longitude = longitude
         user.latitude = latitude
+        # here then commit
         db.session.commit()
 
         if name and user:
-            return render_template('search_user.html', name=name, data=user, form=form, longitude=longitude, latitude=latitude)
+            return render_template('search_user.html', all=all, name=name, data=user, form=form, longitude=longitude, latitude=latitude)
         else:
             return 'Please go back and enter a valid name...', 400  # 400 Bad Request
     
@@ -212,41 +217,46 @@ Function: search for users where the food post latlng is within the users' trave
 Input: food post JSON object
 Output: array of user JSON objects who fulfill the criteria
 '''
-@app.route("/filter_user", methods=['GET'])
+@app.route("/filter_user", methods=['POST'])
 # search for users that are within the distance
 def filter_user():
     # check input format and data is JSON
-    if request.is_json:
-        try:
+    if request.method =='POST':
+        # try:
             # get query info
-            query = request.get_json()
-            print("\nReceived an order in JSON:", query)
+            form_latitude = request.form.get('latitude1')
+            form_longitude = request.form.get('longitude1')
+            # form = request.form
+            print("\nReceived lat & long from the form:")
 
             # do the actual checking
             # return list of user objects from userdB
             all_user_info = user_info.query.all()
             filtered_users = []
             if len(all_user_info):
+
                 # filter for users who are "close" to post according to their travel appetite
                 for user in all_user_info:
                     user_latitude = user.latitude
                     user_longitude = user.longitude
                     user_travel_appetite = float(user.travel_appetite)
-                    query_latitude = query['latitude']
-                    query_longitude = query['longitude']
+                    query_latitude = float(form_latitude)
+                    query_longitude = float(form_longitude)
                     distance = hs.haversine((user_latitude,user_longitude),(query_latitude, query_longitude))
 
-                    if distance <= user_travel_appetite:
+                    if distance <= user_travel_appetite or distance >= user_travel_appetite:
                         filtered_users.append(user)
                 # return list of user objects where the post is within the user's travel appetite
-                return jsonify(
-                    {
-                        "code": 200,
-                        "data": {
-                            "user": [info.json() for info in filtered_users]
-                        }
-                    }
-                )
+                # return jsonify(
+                #     {
+                #         "code": 200,
+                #         "data": {
+                #             "user": [info.json() for info in filtered_users]
+                #         }
+                #     }
+                # )
+              
+                return render_template('search_user.html',all=filtered_users)
             
             else:
                 # the else comes here
@@ -256,8 +266,8 @@ def filter_user():
                         "message": "No information to be displayed."
                     }
                 ), 404
-        except:
-            pass
+        # except:
+        #     pass
 
 if __name__ == '__main__':
     app.run(port=1111, debug=True)
