@@ -90,14 +90,23 @@ def getUserInfo():
     ), 404
 
 # search user by username
-@app.route("/search/user", methods=['POST'])
+@app.route("/search/user", methods=['POST', 'GET'])
 def find_user():
-    name = request.form.get('name')
-    user = user_info.query.filter_by(name=name).first()
-    if name and user:
-        return render_template('search_user.html', name=name, data=user)
-    else:
-        return 'Please go back and enter a valid name...', 400  # 400 Bad Request
+    if request.method =='POST':
+        name = request.form.get('name')
+        latitude = request.form.get('latitude')
+        longitude = request.form.get('longitude')
+        form = request.form
+        user = user_info.query.filter_by(name=name).first()
+        
+        user.longitude = longitude
+        user.latitude = latitude
+        db.session.commit()
+
+        if name and user:
+            return render_template('search_user.html', name=name, data=user, form=form, longitude=longitude, latitude=latitude)
+        else:
+            return 'Please go back and enter a valid name...', 400  # 400 Bad Request
     
 
 # to display user info

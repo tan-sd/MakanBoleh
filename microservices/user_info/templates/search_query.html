@@ -4,10 +4,20 @@
   <meta charset="utf-8">
   <title>Entry Page</title>
 </head>
-<body>
+<body onload="getLocation()">
+
   <form action="search/user" method="post">
     <label for="name">Please enter your name: </label>
     <input type="text" id="name" name="name"><br>
+    Enable to see the lat long
+    <br>
+    <label for="lat">latitude: </label>
+
+    <input type="text" id="latitude" name="latitude">
+    <label for="long">longitude: </label>
+
+    <input type="text" id="longitude" name="longitude">
+    <br>
     <input type="submit" value="SEND">
   </form>
 
@@ -43,6 +53,25 @@
     <input type="submit" value="SEND">
   </form>
 
+  <script>
+    var x = document.getElementById("demo");
+
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+      } else { 
+        x.innerHTML = "Geolocation is not supported by this browser.";
+      }
+    }
+  
+    function showPosition(position) {
+    // x.innerHTML = "Latitude: " + position.coords.latitude + 
+    // "<br>Longitude: " + position.coords.longitude;
+      document.getElementById('longitude').value = position.coords.longitude
+      document.getElementById('latitude').value = position.coords.latitude
+
+    }
+    </script>
 
 </body>
 </html>
