@@ -13,7 +13,8 @@
     <script type="module" src="./api.js"></script>
     <!-- get user location -->
     <script src="./get_user_location.js"></script>
-
+    <!-- load google sign in library -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         #map {
             height: 500px;
@@ -36,6 +37,25 @@
     <div class="form-floating mb-3">
         <input type="text" class="form-control" id="autocomplete">
         <label for="input_place" id="autcomplete_input">Start by typing a location here...</label>
+    </div>
+
+    <!-- google sign in code -->
+    <!-- take note of the data-callback input, you need a function in there to handle the callback-->
+    <div id="g_id_onload"
+        data-client_id="407206605140-bssenou8lkjkhcbagqf95nqem39prulh.apps.googleusercontent.com"
+        data-context="signin"
+        data-ux_mode="popup"
+        data-callback=""
+        data-auto_prompt="false">
+    </div>
+
+    <div class="g_id_signin"
+        data-type="standard"
+        data-shape="rectangular"
+        data-theme="filled_black"
+        data-text="signin_with"
+        data-size="large"
+        data-logo_alignment="left">
     </div>
 
     <!-- get geolocation from user -->

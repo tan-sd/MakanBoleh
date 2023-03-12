@@ -30,12 +30,9 @@ function show_position(position) {
     })
 }
 
-// assuming you have the destination and its address
+// assuming you have the destination as a address
 function get_routing_url(destination) {
     var url = "https://maps.google.com?saddr=Current+Location&daddr=" + destination 
 }
 
-// assuming you have the destination in coordinates (lat, long)
-function get_routing_url(destination) {
-    var url = "https://maps.google.com?saddr=Current+Location&daddr=" + destination 
-}
+
