@@ -1,4 +1,4 @@
-/* buttons ---------------------------------------------------*/
+/* BUTTONS ==============================================================================================*/
 button.btn {
     transition: all .3s ease-in-out;
     font-weight: 600;
@@ -84,4 +84,9 @@ button.btn-main-dark:disabled, button.btn-main-dark-fixed:disabled {
     background-color: #336033 !important;
     border: #336033 solid 1px !important;
     color: #ffffff !important;
+}
+
+/* BACKGROUNDs ==============================================================================================*/
+.bg-light-gradient{
+    background-image: linear-gradient(330deg, #e3d3c3, #fcf1e5);
 }

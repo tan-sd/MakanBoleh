@@ -1,5 +1,5 @@
 <template>
-    <div class="accordion accordion-flush" id="food_accordian">
+    <div class="accordion accordion-flush text-extra-dark bg-extra-light" id="food_accordian">
 
         <!-- V-FOR STARTS HERE -->
         <div class="accordion-item" v-for="(e_buff, index) in buffets" :key="index">
@@ -8,10 +8,10 @@
             <!-- HEADER GOES HERE v -->
             <button class="accordion-button collapsed bg-light" type="button" data-bs-toggle="collapse" :data-bs-target="`#flush-collapse${index}`" aria-expanded="false" :aria-controls="`flush-collapse${index}`" @click="focus_on_buffet(index)">
                 <div class="row vw-100">
-                    <div class="col-5">
+                    <div class="col-5 col-md-2">
                         <img :src="require(`../assets/images/buffet_imgs/buffet${index%3+1}.jpg`)" class="img-fluid">
                     </div>
-                    <div class="col-7">
+                    <div class="col-7 col-md-10">
                         <div class="row">
                             <div class="col-12 col-md-3">
                                 <h6><font-awesome-icon icon="fa-solid fa-location-dot" /> {{ e_buff.location.slice(0,20) }}</h6>
@@ -35,9 +35,24 @@
             <div :id="`flush-collapse${index}`" class="accordion-collapse collapse" :aria-labelledby="`flush-heading${index}`" data-bs-parent="#food_accordian">
             
             <!-- BODY GOES HERE v -->
-            <div class="accordion-body bg-dark text-white">
-                {{ e_buff.description }}
-                <button class="btn btn-main">Click here to route</button>
+            <div class="accordion-body bg-light-gradient">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12 col-lg-8">
+                            <p>
+                                {{ e_buff.description }}
+                            </p>
+                        </div>
+                        <div class="col-12 col-lg-4 d-flex justify-content-center align-items-center">
+                            <div>
+                                <button class="btn btn-main">
+                                    <font-awesome-icon icon="fa-solid fa-person-walking" />&nbsp;&nbsp;Route to Buffet
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    
             </div>
             </div>
         </div>
@@ -56,7 +71,7 @@
                         description: 'Food at SOL',
                         location: '1 Joo Koon Cir, #13-01 FairPrice Hub, Singapore 629117',
                         distance: '5km',
-                        end_time: '2023-03-11T11:15:00',     // yyyy-mm-ddThh:mm:ss <- T is only a seperator
+                        end_time: '2023-03-12T11:15:00',     // yyyy-mm-ddThh:mm:ss <- T is only a seperator
                         diet_res: ['halal', 'vegetarian', 'nobeef'],
                         time_left: '',
                     },
@@ -65,7 +80,7 @@
                         description: 'Food at Esplanade. Really delicious, got chicken wings, burger, nuggets, bull penis, ice cream and chocolate cake! Come fast cos confirm very fast clear one~ :)Food at Esplanade. Really delicious, got chicken wings, burger, nuggets, bull penis, ice cream and chocolate cake! Come fast cos confirm very fast clear one~ :)Food at Esplanade. Really delicious, got chicken wings, burger, nuggets, bull penis, ice cream and chocolate cake! Come fast cos confirm very fast clear one~ :)',
                         location: '1 Esplanade Dr, Singapore 038981',
                         distance: '1km',
-                        end_time: '2023-03-11T22:00:00',
+                        end_time: '2023-03-12T22:00:00',
                         diet_res: ['halal'],
                         time_left: '',
                     },
@@ -74,37 +89,10 @@
                         description: 'Food at ur mom\'s house',
                         location: '65 Chulia St, OCBC Centre, Singapore 049513',
                         distance: '69km',
-                        end_time: '2023-03-11T22:30:00',
+                        end_time: '2023-03-12T22:30:00',
                         diet_res: ['vegetarian'],
                         time_left: '',
                     },
-
-                    {
-                        description: 'Food at SOL',
-                        location: 'SOL',
-                        distance: '5km',
-                        end_time: '2023-03-11T21:30:00',     // yyyy-mm-ddThh:mm:ss <- T is only a seperator
-                        diet_res: ['halal', 'vegetarian'],
-                        time_left: '',
-                    },
-
-                    {
-                        description: 'Food at Esplanade. Really delicious, got chicken wings, burger, nuggets, bull penis, ice cream and chocolate cake! Come fast cos confirm very fast clear one~ :)',
-                        location: 'Esplanade',
-                        distance: '1km',
-                        end_time: '2023-03-11T22:00:00',
-                        diet_res: [],
-                        time_left: '',
-                    },
-
-                    {
-                        description: 'Food at ur mom\'s house',
-                        location: 'You mom\'s house',
-                        distance: '69km',
-                        end_time: '2023-03-11T22:30:00',
-                        diet_res: ['vegetarian'],
-                        time_left: '',
-                    }
                 ],
 
                 diet_icons: {
@@ -183,18 +171,44 @@
 
 
 <style scoped>
-    #food_accordian{
-        position: fixed;
-        bottom: 0;
-        right: 0;
-        left: 0;
-        overflow: scroll;
-        max-height: 40vh;
-        transition: all .8s ease-in-out;
-        border-radius: 12px 12px 0px 0px;
+    /* Up to LG */
+    @media (max-width: 991px) {
+        #food_accordian{
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            overflow: scroll;
+            max-height: 40vh;
+            transition: all .8s ease-in-out;
+            border-radius: 12px 12px 0px 0px;
+        }
+
+        #food_accordian:has(.accordion-button[aria-expanded='true']) {
+            max-height: 60vh;
+        }
     }
 
-    #food_accordian:has(.accordion-button[aria-expanded='true']) {
-        max-height: 60vh;
+    /* Past LG */
+    @media (min-width: 991px) {
+        #food_accordian{
+            bottom: 0;
+            left: 0;
+            overflow-y: scroll;
+            height: 100%;
+            width: 500px;
+            transition: all .8s ease-in-out;
+        }
+    }
+
+    img{
+        width: 120px;
+        height: 70px;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+
+    .accordion-button[aria-expanded='true'] {
+        background-color: #FFC23F !important;
     }
 </style>
