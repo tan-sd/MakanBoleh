@@ -51,6 +51,11 @@ class food_db(db.Model):
         return post
 
 # SHOW ALL POSTS
+
+@app.route("/")
+def faez():
+    return 'welcome to smu'
+
 @app.route("/all")
 def test():
     food_list = food_db.query.all()
