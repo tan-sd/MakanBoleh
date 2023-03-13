@@ -25,6 +25,7 @@ function show_position(position) {
         if(status == google.maps.GeocoderStatus.OK){
             var address = results[0]["formatted_address"]
             console.log(address)
+            get_routing_url(address)
         }
         document.getElementById("location").innerHTML = "latitude = " + latitude + "<br>" + "longitude = " + longitude + "<br>" + "address:" + address
     })
@@ -32,7 +33,8 @@ function show_position(position) {
 
 // assuming you have the destination as a address
 function get_routing_url(destination) {
-    var url = "https://maps.google.com?saddr=Current+Location&daddr=" + destination 
+    var url = "https://maps.google.com?saddr=Current+Location&daddr=" + destination
+    document.getElementById("routing_url").innerHTML = "<a href='" + url + "'>click me</a>"
 }
 
 
