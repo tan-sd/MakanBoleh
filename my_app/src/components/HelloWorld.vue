@@ -1,8 +1,6 @@
 <template>
   <div class="hello">
-    <img
-      src="../assets/images/logos/small_logos/MakanBoleh_logo_long_light_small.png"
-    />
+    
     <h1>{{ msg }}</h1>
     <p>
       For a guide and recipes on how to configure / customize this project,<br />
