@@ -93,7 +93,7 @@ def find_post(post_id):
     return jsonify(
         {
             "code": 404,
-            "message": "Book not found."
+            "message": "Post not found."
         }
     ), 404
 

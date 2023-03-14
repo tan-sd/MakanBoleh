@@ -41,35 +41,35 @@ class forum_db(db.Model):
         }
         return forum
 
-# SHOW ALL POSTS
 
 @app.route("/")
-def faez():
+def test():
     return 'welcome to smu'
 
+# SHOW ALL POSTS
 @app.route("/all")
-def test():
-    food_list = food_db.query.all()
-    if len(food_list):
+def view_all():
+    forum_list = forum_db.query.all()
+    if len(forum_list):
         return jsonify(
             {
                 "code": 200,
                 "data": {
-                    "food": [food.json() for food in food_list]
+                    "forum": [forum.json() for forum in forum_list]
                 }
             }
         )
     return jsonify(
         {
             "code": 404,
-            "message": "There is no food."
+            "message": "There are no forums."
         }
     ), 404
 
 # RETRIEVE SPECIFIC POST
 @app.route("/search/<string:post_id>")
-def find_post(post_id):
-    post = food_db.query.filter_by(post_id=post_id).first()
+def find_post(forum_id):
+    post = forum_db.query.filter_by(forum_id=forum_id).first()
 
     #if post exists, return post json
     if post:
@@ -84,21 +84,21 @@ def find_post(post_id):
     return jsonify(
         {
             "code": 404,
-            "message": "Book not found."
+            "message": "Posts not found."
         }
     ), 404
 
 # CREATE A POST
 @app.route("/create/<int:post_id>", methods=['POST'])
-def create_post(post_id):
+def create_forum(forum_id):
 
-    #check if post is already in the db
-    if(food_db.query.filter_by(post_id=post_id).first()):
+    #check if forum post is already in the db
+    if(forum_db.query.filter_by(forum_id=forum_id).first()):
         return jsonify(
             {
                 "code": 400,
                 "data": {
-                    "post_id": post_id
+                    "forum_id": forum_id
                 },
                 "message": "Post already exists."
             }
@@ -106,7 +106,7 @@ def create_post(post_id):
     
     #else, carry on making the post
     data = request.get_json()
-    post = food_db(**data)
+    post = forum_db(**data)
 
     #attempt to add post into db
     try:
@@ -119,7 +119,7 @@ def create_post(post_id):
             {
                 "code":500,
                 "data":{
-                    "post_id":post_id
+                    "forum_id":forum_id
                 },
                 "message": "An error occurred when creating a post. Please check if all fields meet the constraints of the database."
             }
@@ -136,8 +136,8 @@ def create_post(post_id):
 
 # DELETE A POST
 @app.route("/delete/<int:post_id>", methods=['DELETE'])
-def delete(post_id):
-    post = food_db.query.filter_by(post_id=post_id).first()
+def delete(forum_id):
+    post = forum_db.query.filter_by(forum_id=forum_id).first()
 
     #check if post exists
     if post:
@@ -153,7 +153,7 @@ def delete(post_id):
             {
                 "code": 500,
                 "data": {
-                    "post_id": post_id
+                    "forum_id": forum_id
                 },
                 "message": "An error occurred when deleting the post. Please check if the post still exists."
             }
@@ -173,7 +173,7 @@ def delete(post_id):
         {
             "code": 404,
             "data": {
-                "post_id": post_id
+                "forum_id": forum_id
             },
             "message": "Post not found."
         }
@@ -181,9 +181,9 @@ def delete(post_id):
 
 # EDIT A POST (SEND A JSON WITH UPDATED PARTICULARS)
 @app.route("/edit/<int:post_id>", methods=['PUT'])
-def edit(post_id):
+def edit(forum_id):
     
-    post = food_db.query.filter_by(post_id=post_id).first()
+    post = forum_db.query.filter_by(forum_id=forum_id).first()
 
     #check if post exists
     if post:
@@ -218,7 +218,7 @@ def edit(post_id):
                 {
                     "code": 500,
                     "data": {
-                        "post_id": post_id
+                        "forum_id": forum_id
                     },
                     "message": "An error occurred while updating the post. " + str(e)
                 }
@@ -229,65 +229,8 @@ def edit(post_id):
         {
             "code": 404,
             "data": {
-                "post_id": post_id
+                "forum_id": forum_id
             },
             "message": "Post not found."
         }
     ), 404
-    
-'''
-Details for wrapper function below
-
-Function: search for food posts which are within a specified user's travel appetite
-Input: user JSON object
-Output: array of food post JSON objects that fulfill the criteria
-'''
-@app.route("/filter_post", methods=['GET'])
-# search for users that are within the distance
-def filter_post():
-    # check input format and data is JSON
-    if request.is_json:
-        try:
-            # get query info
-            query = request.get_json()
-            print("\nReceived an order in JSON:", query)
-
-            # do the actual checking
-            # return list of food post objects from food_dB
-            all_food_info = food_db.query.all()
-            filtered_food = []
-            if len(all_food_info):
-                # filter for posts within specified user's travel appetite
-                for food in all_food_info:
-                    food_latitude = food.latitude
-                    food_longitude = food.longitude
-                    user_latitude = query['latitude']
-                    user_longitude = query['longitude']
-                    user_travel_appetite = query['travel_appetite']
-                    distance = hs.haversine((food_latitude,food_longitude),(user_latitude, user_longitude))
-
-                    if distance <= user_travel_appetite:
-                        filtered_food.append(food)
-                # return list of food post objects where the post is within the user's travel appetite
-                return jsonify(
-                    {
-                        "code": 200,
-                        "data": {
-                            "user": [info.json() for info in filtered_food]
-                        }
-                    }
-                )
-            
-            else:
-                # the else comes here
-                return jsonify(
-                    {
-                        "code": 404,
-                        "message": "No information to be displayed."
-                    }
-                ), 404
-        except:
-            pass
-
-if __name__ == '__main__':
-    app.run(port=1113, debug=True)
