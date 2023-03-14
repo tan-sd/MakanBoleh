@@ -118,7 +118,11 @@ def find_user():
 @app.route("/profile/<int:user_id>", methods=['GET'])
 def find_by_user_id(user_id):
 
+<<<<<<< HEAD:user_info/user_info.py
+    # shd oni hav one user returned and none if no match
+=======
     # shd display user profile
+>>>>>>> main:microservices/user_info/user_info.py
     user = user_info.query.filter_by(user_id=user_id).first()
     if user:
         return jsonify(
