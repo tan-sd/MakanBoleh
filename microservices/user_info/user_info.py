@@ -6,6 +6,7 @@ from os import environ
 import os, sys
 import haversine as hs
 import requests
+import bcrypt
 # from invokes import invoke_http
 
 # request.args for get param
@@ -26,16 +27,23 @@ class user_info(db.Model):
 
     user_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.VARCHAR(64), nullable=False)
-    # default_address = db.Column(db.ARRAY(Nested(MutableList.as_mutable(ARRAY(MutableDict.as_mutable(ARRAY(String)))))))
-    address = db.Column(db.VARCHAR(64), nullable=False)
+    username = db.Column(db.VARCHAR(64), nullable=False)
+    number = db.Column(db.VARCHAR(12), nullable=False)
+    email = db.Column(db.VARCHAR(128), nullable=False)
+    password = db.Column(db.VARCHAR(64), nullable=False)
+    address = db.Column(db.VARCHAR(128), nullable=False)
     latitude = db.Column(db.Float(precision=6), nullable=False)
     longitude = db.Column(db.Float(precision=6), nullable=False)
     dietary_type = db.Column(db.VARCHAR(64))
     travel_appetite = db.Column(db.VARCHAR(64))
 
-    def __init__(self, user_id, name, address, latitude, longitude, dietary_type, travel_appetite):
+    def __init__(self, user_id, name, username, number, email, password, address, latitude, longitude, dietary_type, travel_appetite):
         self.user_id = user_id
         self.name = name
+        self.username = username
+        self.number = number
+        self.email = email
+        self.password = password
         self.address = address
         self.latitude = latitude
         self.longitude = longitude
@@ -61,10 +69,73 @@ class user_info(db.Model):
         
 @app.route('/')
 def nothing():
-    return render_template('search_query.html')
+    return render_template('login.html')
     
+# user create account
+@app.route("/register", methods=['POST', 'GET'])
+def register_user():
+
+    # im just changing the password here
+    if request.method =='POST':
+        status = False
+        # these are the inputs
+        username = request.form.get('username')
+        dietary = request.form.get('username')
+        travelappetite = request.form.get('username')
+        default_address = request.form.get('username')
+
+
+        # check if user name exists
+        user = user_info.query.filter_by(username=username).first()
+
+        # here will have all the checking done.
+        if True:
+            status = True
+
+        # pw that user keyed in
+        keyed_password = request.form.get('password')
+        keyed_password = keyed_password.encode('utf-8')
+
+        hashed = bcrypt.hashpw(keyed_password, bcrypt.gensalt(5)) 
+
+        if status:
+            return render_template('after_login.html', username = username, keyed_password = keyed_password, hashed = hashed, status = status)
+        else:
+            return 'Wrong password...', 400  # 400 Bad Request
+
+# let user log in 
+@app.route("/login", methods=['POST', 'GET'])
+def check_login_details():
+
+    if request.method =='POST':
+        status = False
+        # these are the inputs
+        username = request.form.get('username')
+        user = user_info.query.filter_by(username=username).first()
+
+        # pw that user keyed in
+        keyed_password = request.form.get('password')
+        keyed_password = keyed_password.encode('utf-8')
+
+        # pw that is stored in db
+        password =  user.password
+        password = password.encode('utf-8')
+        hashed = bcrypt.hashpw(password, bcrypt.gensalt(5)) 
+
+        if bcrypt.checkpw(keyed_password, hashed):
+            print("login success")
+            status = True
+        else:
+            print("incorrect password")
+
+        if status:
+            return render_template('after_login.html', username = username, keyed_password = keyed_password, password = password, hashed = hashed, status = status)
+        else:
+            return 'Wrong password...', 400  # 400 Bad Request
+
+
 # to diplay profile of all users
-@app.route("/profile")
+@app.route("/allusers")
 def getUserInfo():
 
     all_user_info = user_info.query.all()
@@ -118,11 +189,7 @@ def find_user():
 @app.route("/profile/<int:user_id>", methods=['GET'])
 def find_by_user_id(user_id):
 
-<<<<<<< HEAD:user_info/user_info.py
-    # shd oni hav one user returned and none if no match
-=======
     # shd display user profile
->>>>>>> main:microservices/user_info/user_info.py
     user = user_info.query.filter_by(user_id=user_id).first()
     if user:
         return jsonify(
