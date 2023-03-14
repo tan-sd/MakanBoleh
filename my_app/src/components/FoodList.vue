@@ -1,4 +1,5 @@
 <template>
+    {{ this.food }}
     <div class="accordion accordion-flush text-extra-dark bg-extra-light" id="food_accordian">
         <!-- HEADER W BUTTONS -->
         <div class="accordion-item bg-dark text-light py-3 m-0 row" v-if="my_buffets.length > 0">
@@ -80,7 +81,7 @@
         <!-- OTHER BUFFETS -->
         <div v-if="to_display == 'other' ">
             <!-- V-FOR BUFFETS STARTS HERE -->
-            <div class="accordion-item" v-for="(e_buff, index) in buffets" :key="index" >
+            <div class="accordion-item" v-for="(e_buff, index) in food" :key="index" >
                 <h2 class="accordion-header" :id="`flush-heading${index}`">
     
                 <!-- HEADER GOES HERE v -->
@@ -152,11 +153,14 @@
 
 
 <script>
+    const get_all_food_URL = "http://localhost:1112/all";
+
     export default{
         props: [],
 
         data() {
             return{
+                food: [],
                 buffets: [
                     {
                         description: 'Food at SOL',
@@ -230,6 +234,21 @@
         },
 
         methods: {
+            get_all_food() {
+                const response = fetch(get_all_food_URL)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(response);
+                        if (data.code === 404) {
+                            console.log("error!");
+                        } else {
+                            this.food = data.data.food
+                    }
+                })
+                    .catch(error => {
+                        console.log(error);
+                    })
+            },
             update_buffet_time_left() {
                 let curr_time = new Date();
 
@@ -363,8 +382,9 @@
         },
 
         async created() {
-            this.getLocation()
-            this.update_buffet_time_left()
+            this.getLocation();
+            this.update_buffet_time_left();
+            this.get_all_food();
         }
     }
 </script>
@@ -400,7 +420,6 @@
             transition: all .8s ease-in-out;
         }
     }
-
     img{
         aspect-ratio: 120/ 70;
         object-fit: cover;

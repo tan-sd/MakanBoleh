@@ -1,12 +1,22 @@
 <template>
     <div id="map">
         <GMapMap
-            :center="{lat: 1.300270, lng: 103.851959}"
-            :zoom="15"
+            :center="center"
+            :zoom="14"
             map-type-id="terrain"
             style="height: 50vh;"
             :options="options"
+        >
+        <GMapMarker
+            :key="index"
+            v-for="(m, index) in markers"
+            :position="m.position"
         />
+        <!-- <GMapCircle
+            :radius="500"
+            :center="center"
+        /> -->
+        </GMapMap>
     </div>
 
     <GMapAutocomplete
@@ -15,22 +25,36 @@
         >
     </GMapAutocomplete>
   </template>
-  
-  <!-- <script>
-  export default {
-    name: 'App',
-    data() {
-      return {
-        center: {lat: 51.093048, lng: 6.842120},
-      }
-    }
-  }
-  </script> -->
 
   <script>
     export default {
+        methods: {
+            async get_location() {
+                return new Promise((resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(resolve, reject);
+                });
+            }
+        },
+        mounted() {
+            this.get_location().then(position => {
+                this.markers[0].position.lat = position.coords.latitude;
+                this.markers[0].position.lng = position.coords.longitude;
+                this.center.lat = position.coords.latitude;
+                this.center.lng = position.coords.longitude;
+            });
+        },
         data() {
             return {
+                center: {lat: 1.300270, lng: 103.851959},
+                markers:
+                [
+                    {
+                        position: {
+                            lat: null,
+                            lng: null,
+                        },
+                    }
+                ],
                 options: {
                     zoomControl: false,
                     mapTypeControl: false,
