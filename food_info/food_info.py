@@ -4,19 +4,21 @@ import os
 import haversine as hs
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 from datetime import datetime
 
 # INITIALISING APP
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/food_db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost:3306/food_db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 
 db = SQLAlchemy(app)
+CORS(app)
 
 # DECLARING DATABASE CLASS
 class food_db(db.Model):
-    __tablename__ = 'food_info'
+    __tablename__ = 'food_table'
 
     post_id = db.Column(db.Integer, primary_key=True)
     creator_id = db.Column(db.Integer, nullable=False)
