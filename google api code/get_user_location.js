@@ -36,5 +36,3 @@ function get_routing_url(destination) {
     var url = "https://maps.google.com?saddr=Current+Location&daddr=" + destination
     document.getElementById("routing_url").innerHTML = "<a href='" + url + "'>click me</a>"
 }
-
-
