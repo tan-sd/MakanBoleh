@@ -1,0 +1,92 @@
+/* BUTTONS ==============================================================================================*/
+button.btn {
+    transition: all .3s ease-in-out;
+    font-weight: 600;
+}
+
+/* expand margin adding */
+button.btn-expand:hover, button.btn-main:hover, button.btn-main-secondary:hover, button.btn-main-light:hover, button.btn-main-dark:hover{
+    padding-left: calc(.75vw + 15px);
+    padding-right: calc(.75vw + 15px);
+}
+
+/* btn main */
+button.btn-main, button.btn-main-fixed {
+    background-color: #FF7248;
+    color: #FFFFFF;
+}
+
+button.btn-main:active:focus, button.btn-main:active, button.btn-main:hover,
+button.btn-main-fixed:active:focus, button.btn-main-fixed:active, button.btn-main-fixed:hover {
+    background-color: #c64a25 !important;
+    border: #c64a25 solid 1px !important;
+    color: #FFFFFF !important;
+}
+
+button.btn-main:disabled, button.btn-main-fixed:disabled {
+    background-color: #FF7248 !important;
+    border: #FF7248 solid 1px !important;
+    color: #FFFFFF !important;
+}
+
+/* btn main secondary */
+button.btn-main-secondary, button.btn-main-secondary-fixed {
+    background-color: #FFC23F;
+    color: #1e2e1e;
+}
+
+button.btn-main-secondary:active:focus, button.btn-main-secondary:active, button.btn-main-secondary:hover,
+button.btn-main-secondary-fixed:active:focus, button.btn-main-secondary-fixed:active, button.btn-main-secondary-fixed:hover {
+    background-color: #dca42b !important;
+    border: #dca42b solid 1px !important;
+    color: #1e2e1e !important;
+}
+
+button.btn-main-secondary:disabled, button.btn-main-secondary-fixed:disabled {
+    background-color: #FFC23F !important;
+    border: #FFC23F solid 1px !important;
+    color: #1e2e1e !important;
+}
+
+/* btn main light */
+button.btn-main-light, button.btn-main-light-fixed {
+    background-color: #F1D5BA;
+    color: #1e2e1e;
+}
+
+button.btn-main-light:active:focus, button.btn-main-light:active, button.btn-main-light:hover,
+button.btn-main-light-fixed:active:focus, button.btn-main-light-fixed:active, button.btn-main-light-fixed:hover {
+    background-color: #e5bb93 !important;
+    border: #e5bb93 solid 1px !important;
+    color: #1e2e1e !important;
+}
+
+button.btn-main-light:disabled, button.btn-main-light-fixed:disabled {
+    background-color: #F1D5BA !important;
+    border: #F1D5BA solid 1px !important;
+    color: #1e2e1e !important;
+}
+
+/* btn main dark */
+button.btn-main-dark, button.btn-main-dark-fixed {
+    background-color: #336033;
+    color: #ffffff;
+}
+
+button.btn-main-dark:active:focus, button.btn-main-dark:active, button.btn-main-dark:hover,
+button.btn-main-dark-fixed:active:focus, button.btn-main-dark-fixed:active, button.btn-main-dark-fixed:hover {
+    background-color: #1e381e !important;
+    border: #1e381e solid 1px !important;
+    color: #ffffff !important;
+}
+
+button.btn-main-dark:disabled, button.btn-main-dark-fixed:disabled {
+    background-color: #336033 !important;
+    border: #336033 solid 1px !important;
+    color: #ffffff !important;
+}
+
+/* BACKGROUNDs ==============================================================================================*/
+.bg-light-gradient{
+    background-image: linear-gradient(330deg, #e3d3c3, #fcf1e5);
+}

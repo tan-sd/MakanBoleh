@@ -1,0 +1,3 @@
+- Please code in camelCase 
+- Comment after you're done coding
+- Learn to use git here: https://www.youtube.com/watch?v=RGOj5yH7evk
