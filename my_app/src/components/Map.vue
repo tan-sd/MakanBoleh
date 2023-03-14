@@ -4,7 +4,7 @@
             :center="{lat: 1.300270, lng: 103.851959}"
             :zoom="15"
             map-type-id="terrain"
-            style="width: 60vw; height: 50vh; left: 50%; transform: translate(-50%);"
+            style="height: 50vh;"
             :options="options"
         />
     </div>
